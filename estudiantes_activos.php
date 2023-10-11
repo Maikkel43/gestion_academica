@@ -29,6 +29,7 @@
         $estudiante = new Estudiante();
         $arreglo_datos = $estudiante->getAll();
         $arreglo_estado = $estudiante->estadoByEgresadoDesercion();
+        $arreglo_bootcamp = $estudiante->getBootcamps();
         //print_r($arreglo_datos);
     ?>
 
@@ -61,6 +62,42 @@
                             <td>
                                 <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#ModalEstado<?php echo $item["id"]; ?>">Cambiar Estado</button>
                             </td>
+                            <td>
+    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#reubicar<?php echo $item["id"]; ?>">Reubicar</button>
+
+    <!-- Modal de Reubicaciones -->
+    <div class="modal fade" id="reubicar<?php echo $item["id"]; ?>" tabindex="-1" aria-labelledby="reubicarLabel<?php echo $item["id"]; ?>" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reubicarLabel<?php echo $item["id"]; ?>">Reubicaciones</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="reubiciones.php" method="POST"> <!-- Asumiendo que la lógica de reubicación estará en reubicados.php -->
+                    <div class="modal-body">
+                        <h5><?php echo $item["nombre"]; ?></h5>
+                        <p><strong>Bootcamp Actual: </strong><?php echo $item["bootcamp"]; ?></p>
+                        <input type="hidden" name="id_estudiante" value="<?php echo $item["id"]; ?>">
+                        <label for="nuevoBootcamp<?php echo $item["id"]; ?>">Selecciona un Bootcamp:</label>
+                        <select id="nuevoBootcamp<?php echo $item["id"]; ?>" name="nuevoBootcamp" class="form-select">
+                            <?php foreach($arreglo_bootcamp as $bootcamp) { 
+                                if ($bootcamp['id'] != $item['id_bootcamp']) { // Evitar mostrar el bootcamp actual en la lista de opciones
+                            ?>
+                                <option value="<?php echo $bootcamp['id']; ?>"><?php echo $bootcamp['bootcamp']; ?></option>
+                            <?php 
+                                }
+                            } ?>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <input type="submit" class="btn btn-primary" value="Reubicar">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</td>
                         </tr>
 
                         <!-- Modal -->
@@ -87,6 +124,10 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                                     <input type="submit" class="btn btn-danger" value="Cambiar Estado">
                                 </div>
+
+                                
+
+
                             </form>
 
                             <?php $estudiante->actualizarEstadoDesercionEgresado(); ?>

@@ -169,6 +169,41 @@ class Estudiante extends Conexion{
         $resultado = $query->fetchAll(PDO::FETCH_ASSOC);//arreglo de objetos
         return $resultado;
     }
+
+    public function actualizarEstadoReubicado(){
+        if(isset($_POST['id_estudiante'], $_POST['estado'])){
+            $this->id = $_POST['id_estudiante']; //2
+            $this->estado = $_POST['estado'];
+
+            $pdo = $this->conectar();
+            $query = $pdo->prepare("UPDATE estudiantes SET id_estado = ? WHERE id = ?");
+
+            $resultado = $query->execute([$this->estado, $this->id]);
+            if($resultado){
+                echo "<script>
+                    window.location = 'estudiantes_activos.php'
+                </script>";
+            }else{
+                echo "Error, al cambiar el estado del estudiante";
+            }
+        }
+    }
+
+    public function reubicarEstudiante($id_estudiante, $nuevoBootcamp) {
+        $pdo = $this->conectar();
+        $query = $pdo->prepare("UPDATE estudiantes SET id_bootcamp = ?, id_estado = 2 WHERE id = ?");
+        return $query->execute([$nuevoBootcamp, $id_estudiante]);
+    }
+
+    public function getEstudiantesReubicados() {
+        $pdo = $this->conectar();
+        $query = $pdo->query("SELECT estudiantes.*, bootcamp.bootcamp FROM estudiantes INNER JOIN bootcamp ON estudiantes.id_bootcamp = bootcamp.id WHERE estudiantes.id_estado = 2");
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    
+
 }
+
 
 ?>
